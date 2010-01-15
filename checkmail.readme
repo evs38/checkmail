@@ -1,0 +1,126 @@
+NAME
+       checkmail
+
+SYNOPSIS
+       checkmail.pl [-hqlr] [-m <host>] -f <file>|<address>
+
+DESCRIPTION
+       checkmail prüft die Zustellbarkeit von E-Mail-Adressen. Es ist
+       entweder die zu prüfende Adresse als letztes Argument oder
+       mit dem Parameter -f eine Datei mit zu prüfenden Adressen zu
+       übergeben.
+
+   Argumente:
+
+       -h
+            Mit dem Argument -h wird eine kurze Hilfe ausgegeben.
+
+       -q
+            Mit dem Argument -q werden alle Ausgaben unterdrückt;
+            das Script beendet sich nur mit einem Exit-Status zwischen
+            0 und 3.
+
+       -l
+            Mit dem Argument -l wird ein ausführliches Logging des
+            SMTP-Dialogs aktiviert.
+
+       -r
+            Mit dem Argument -r wird auch eine gezielt ungültige Adresse
+            geprüft, um festzustellen, ob der Host nicht einfach jede
+            Mailadresse ohne Prüfung akzeptiert.
+       -m
+            Mit dem Argument -m, gefolgt nach Leerzeichen von einem
+	    Hostnamen, kann statt der Abfrage des für die Domain
+            zuständigen Hosts per DNS die Zustellfähigkeit bei einem
+            bestimmten Host geprüft werden.
+
+            Beispiel: checkmail.pl -m test.host.example mail@domain.example
+
+       -f
+            Mit dem Argument -f, gefolgt nach Leerzeichen von einem
+	    Dateinamen, kann eine ganze Reihe von zu prüfenden Mailadressen
+            aus einer Datei eingelesen werden, die jeweils eine Adresse
+            pro Zeile enthält.
+
+            Beispiel: checkmail.pl -f adressen.txt
+
+
+   Basiskonfiguration:
+   
+       Die Basiskonfiguration erfolgt innerhalb des Scripts. Anzugeben
+       sind:
+       
+       $config{'helo'}:
+            Der im SMTP-Dialog für HELO/EHLO zu verwendende Hostname.
+
+       $config{'from'}:
+            Die Absenderadresse (Envelope-From:) für den Test.
+
+       $config{'rand'}:
+            Der Localpart der für den Parameter -r erforderlichen
+            zufälligen Adresse.
+
+   Funktionsweise:
+   
+       Vor dem ersten Aufruf ist innerhalb des Scripts die
+       Basiskonfiguration vorzunehmen.
+       
+       Danach kann das Script unter Angabe der zu prüfenden E-Mail-Adresse
+       aufgerufen werden. Es versucht den oder die zuständigen MX (Mail
+       eXchanger) für die Domain der Mailadresse zu ermitteln (ggf., falls
+       nicht vorhanden, an den entsprechenden Host zuzustellen), nach dort
+       zu verbinden und den SMTP-Dialog bis zum "RCPT TO:" durchzuführen,
+       um dann die Antwort des Mailservers auszuwerten.
+       
+       Um Mailserver zu erkennen, die zunächst jede Mailadresse akzeptieren
+       und unerwünschte Mail erst später bouncen oder unterdrücken, kann
+       danach ein weiterer Test mit einer sicher ungültigen Mailadresse
+       ausgeführt werden (-r).
+       
+       Nicht nur das Ergebnis des Tests, sondern auch der Dialog mit dem
+       Mailserver kann vermittels des Parameters -l ausgegeben werden; dies
+       ist hilfreich, um auszuschließen, daß die die Testverbindung aus
+       andere Gründen abgewiesen wird.
+       
+       Wenn (gar) keine Textausgabe gewünscht ist, kann diese vermittels -q
+       unterdrückt werden; das Script beendet sich dann mit einem der vier
+       folgenden Statuscodes:
+       
+          0: Adresse gültig oder Massenaufruf (-f)
+          1: Adresse ungültig
+          2: Adresse kann nicht geprüft werden (-r und negativer Test)
+          3: temporärer Fehler
+
+       Mehrere Mailadressen können mit Hilfe des Parameters -f innerhalb
+       einer Datei (eine Adresse pro Zeile) übergeben werden; in diesem
+       Fall wird immer der Status "0" zurückgegeben.
+       
+       Schließlich kann mit Hilfe des Parameters -m die DNS-Abfrage
+       unterdrückt und die Verbindung zu einem bestimmten Host erzwungen
+       werden.
+
+   Hinweis: Der Test sollte nicht von einem Dialup-Host oder einem Host
+   auf einer sonstigen Blacklist aus durchgeführt werden! Ggf. kann ein
+   erneuter Aufruf von checkmail.pl -l für Klarheit sorgen, ob der Test
+   wegen der Auswertung einer Blacklist - unabhängig von der verwendeten
+   Adresse - fehlschlägt.
+
+DEPENDANCIES
+       Die folgenden CPAN-Module werden neben Perl 5.6.1 oder höher benötigt:
+
+            Net::DNS
+
+BUGS
+       - Fehler und Fehleingaben werden größtenteils nicht abgefangen.
+
+       Weitere Bugs nimmt <thh@inter.net> gerne entgegen.
+
+AUTHOR
+       Thomas Hochstein <thh@inter.net>
+
+VERSION
+       V 0.2 [beta]
+
+COPYRIGHT
+       © 2002-2005 Thomas Hochstein.
+       See source for license und warranty.
