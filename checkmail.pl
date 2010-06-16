@@ -17,9 +17,7 @@ my %config=(
             # value used for HELO/EHLO - a valid hostname you own
             helo => 'testhost.domain.example',
             # value used for MAIL FROM: - a valid address under your control
-            from => 'mailtest@testhost.domain.example',
-            # a syntactically valid "random" - reliably not existing - localpart
-            rand => 'ZOq62fow1i'
+            from => 'mailtest@testhost.domain.example'
            );
 
 ################################### Modules ####################################
@@ -208,7 +206,7 @@ sub checksmtp {
       # -r: try random address (which should be guaranteed to be invalid)
       if ($options{'r'}) {
         (undef,my $domain) = splitaddress($address);
-        my ($success,$code,@message) = try_rcpt_to(\$smtp,$config{'rand'}.'@'.$domain,$logr);
+        my ($success,$code,@message) = try_rcpt_to(\$smtp,create_rand_addr($domain),$logr);
         # connection failure?
         if ($success < 0) {
           $status = connection_failed(@message);
@@ -251,6 +249,20 @@ sub splitaddress {
   (my $lp = $address) =~ s/^([^@]+)@.*/$1/;
   (my $domain = $address) =~ s/[^@]+\@(\S*)$/$1/;
   return ($lp,$domain);
+};
+
+############################### create_rand_addr ###############################
+# create a random mail address
+# IN : $domain: the domain part
+# OUT: $address: the address
+sub create_rand_addr {
+  my($domain)=@_;
+  my $allowed = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789-+_=';
+  my $address = '';
+  while (length($address) < 15) { 
+    $address .= substr($allowed, (int(rand(length($allowed)))),1);
+  };
+  return ($address.'@'.$domain);
 };
 
 ################################ parse_dns_reply ###############################
@@ -420,11 +432,6 @@ The hostname to be used for I<HELO> or I<EHLO> in the SMTP dialog.
 
 The sender address to be used for I<MAIL FROM> while testing.
 
-=item B<$config{'rand'}>
-
-A "random" local part to construct a reliably invalid address for use
-with the B<-r> option.
-
 =back
 
 =head2 Usage
@@ -528,8 +535,8 @@ Log and print out the whole SMTP dialog.
 
 =item B<-r> (random address)
 
-Also try a reliably invalid address - defined in B<$config{'rand'}> -
-to catch hosts that try undermine address verification.
+Also try a reliably invalid address to catch hosts that try undermine
+address verification.
 
 =item B<-m> I<host> (MX to use)
 
