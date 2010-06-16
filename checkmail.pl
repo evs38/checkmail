@@ -202,7 +202,7 @@ sub checksmtp {
     my ($success,$code,@message) = try_rcpt_to(\$smtp,$address,$logr);
     # connection failure?
     if ($success < 0) {
-      $status = connection_failed();
+      $status = connection_failed(@message);
     # delivery attempt was successful?
     } elsif ($success) {
       # -r: try random address (which should be guaranteed to be invalid)
@@ -211,7 +211,7 @@ sub checksmtp {
         my ($success,$code,@message) = try_rcpt_to(\$smtp,$config{'rand'}.'@'.$domain,$logr);
         # connection failure?
         if ($success < 0) {
-          $status = connection_failed();
+          $status = connection_failed(@message);
         # verification impossible?
         } elsif ($success) {
           $status = 3;
@@ -298,16 +298,18 @@ sub print_dns_result {
 # IN : \$smtp    : a reference to an SMTP object
 #      $recipient: a mail address
 #      \$log     : reference to the log (to be printed out via -l)
-# OUT: $success: true or false
+# OUT: $success: exit code (0 for false, 1 for true, -1 for tempfail)
 #      $code   : SMTP status code
 #      $message: SMTP status message
 #      \$log will be changed
 sub try_rcpt_to {
   my($smtpr,$recipient,$logr)=@_;
   $$logr .= sprintf("RCPT TO:<%s>\n",$recipient);
-  my $success = $$smtpr->to($recipient);
+  my $success;
+  $$smtpr->to($recipient);
   if ($$smtpr->code) {
     log_smtp_reply($logr,$$smtpr->code,$$smtpr->message);
+    $success = analyze_smtp_reply($$smtpr->code,$$smtpr->message);
   } else {
     $success = -1;
     $$logr .= "---Connection failure---\n";
@@ -328,11 +330,32 @@ sub log_smtp_reply {
   return;
 }
 
+############################### analyze_smtp_reply ##############################
+# analyze SMTP response codes and messages
+# IN : $code    : SMTP status code
+#      @message : SMTP status message
+# OUT: exit code (0 for false, 1 for true, -1 for tempfail)
+sub analyze_smtp_reply {
+  my($code,@message)=@_;
+  my $type = substr($code, 0, 1);
+  if ($type == 2) {
+    return 1;
+  } elsif ($type == 5) {
+    return 0;
+  } elsif ($type == 4) {
+    return -1;
+  };
+  return -1;
+}
+
 ############################## connection_failed ###############################
 # print failure message and return status 1
+# IN : @message : SMTP status message
 # OUT: 1
 sub connection_failed {
-  print "  > Connection failure.\n" if !($options{'q'});
+  my(@message)=@_;
+  print "  ! Connection failed or other temporary failure.\n" if !($options{'q'});
+  printf("    %s\n",join('    ',@message)) if @message;
   return 1;
 }
 
