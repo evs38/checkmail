@@ -24,6 +24,7 @@ my %config=(
 use strict;
 use File::Basename;
 use Getopt::Std;
+use Mail::Address;
 use Net::DNS;
 use Net::SMTP;
 
@@ -85,7 +86,7 @@ if ($options{'f'}) {
 my (%targets,$curstat,$status,$log,$message);
 foreach (@addresses) {
   my $address = $_;
-  (undef,my $domain) = splitaddress($address);
+  my $domain = Mail::Address->new('',$address)->host;
   printf("  * Testing %s ...\n",$address) if !($options{'q'});
   $log .=  "\n===== BEGIN $address =====\n";
   # get list of target hosts or take host forced via -m
@@ -205,8 +206,7 @@ sub checksmtp {
     } elsif ($success) {
       # -r: try random address (which should be guaranteed to be invalid)
       if ($options{'r'}) {
-        (undef,my $domain) = splitaddress($address);
-        my ($success,$code,@message) = try_rcpt_to(\$smtp,create_rand_addr($domain),$logr);
+        my ($success,$code,@message) = try_rcpt_to(\$smtp,create_rand_addr(Mail::Address->new('',$address)->host),$logr);
         # connection failure?
         if ($success < 0) {
           $status = connection_failed(@message);
@@ -238,18 +238,6 @@ sub checksmtp {
   };
   return $status;
 }
-
-################################# splitaddress #################################
-# split mail address into local and domain part
-# IN : $address: a mail address
-# OUT: $local : local part
-#      $domain: domain part
-sub splitaddress {
-  my($address)=@_;
-  (my $lp = $address) =~ s/^([^@]+)@.*/$1/;
-  (my $domain = $address) =~ s/[^@]+\@(\S*)$/$1/;
-  return ($lp,$domain);
-};
 
 ############################### create_rand_addr ###############################
 # create a random mail address
@@ -398,6 +386,10 @@ File::Basename
 =item -
 
 Getopt::Std
+
+=item -
+
+Mail::Address I<(CPAN)>
 
 =item -
 
