@@ -1,0 +1,27 @@
+Version 0.3
+
+* Add Changelog.
+  Thomas Hochstein <thh@inter.net> 2010-06-16 22:48:23 +0200
+
+* Add documentation in POD format.
+  - Drop checkmail.readme
+  Thomas Hochstein <thh@inter.net> 2010-06-16 21:11:43 +0200
+
+* Complete rewrite.
+  - use strict;
+  - modularize code
+  - refactor application logic
+  - more verbose output
+  - test MXes in order of precedence
+  - cope with multi-line responses
+  - slightly change meaning of exit status
+  - batch processing: set exit status to highest generated value
+  Fixes #9.
+  Fixes #10.
+  Thomas Hochstein <thh@inter.net> 2010-06-16 21:11:23 +0200
+
+
+Version 0.2
+
+* Initial check-in.
+  Thomas Hochstein <thh@inter.net> Wed Aug 8 22:00:00 2010 +0200
