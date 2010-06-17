@@ -1,3 +1,23 @@
+Version 0.4
+
+* Add overrides for configuration (MAIL FROM/EHLO).
+  New commandline options: -s <sender> and -e <EHLO>.
+  Change documentation accordingly.
+  Thomas Hochstein <thh@inter.net> Thu Jun 17 22:56:14 2010 +0200
+    
+* Replace splitaddress() by Mail::Address.
+  Thomas Hochstein <thh@inter.net> Wed Jun 16 22:08:22 2010 +0200
+    
+* -r: Create a really random localpart.
+  Add create_rand_addr().
+  Thomas Hochstein <thh@inter.net> Wed Jun 16 21:51:50 2010 +0200
+
+* Analyze failure codes, don't fail on temporary failures.
+  Add analyze_smtp_reply().
+  Fixes #8.
+  Thomas Hochstein <thh@inter.net> Wed Jun 16 21:37:43 2010 +0200
+
+
 Version 0.3
 
 * Add Changelog.
@@ -24,4 +44,4 @@ Version 0.3
 Version 0.2
 
 * Initial check-in.
-  Thomas Hochstein <thh@inter.net> Wed Aug 8 22:00:00 2010 +0200
+  Thomas Hochstein <thh@inter.net> Wed Aug 3 22:00:00 2005 +0200

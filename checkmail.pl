@@ -1,6 +1,6 @@
 #! /usr/bin/perl -W
 #
-# checkmail Version 0.3 by Thomas Hochstein
+# checkmail Version 0.4 by Thomas Hochstein
 #
 # This script tries to verify the deliverability of (a) mail address(es).
 # 
@@ -9,7 +9,7 @@
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
 
-our $VERSION = "0.3";
+our $VERSION = "0.4";
 
 ################################# Configuration ################################
 # Please fill in a working configuration!
