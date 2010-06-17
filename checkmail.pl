@@ -35,7 +35,7 @@ my $myself = basename($0);
 
 # read commandline options
 my %options;
-getopts('Vhqlrf:m:', \%options);
+getopts('Vhqlrf:m:s:e:', \%options);
 
 # -V: display version
 if ($options{'V'}) {
@@ -52,17 +52,23 @@ if ($options{'h'}) {
 
 # display usage information if neither -f nor an address are present
 if (!$options{'f'} and !$ARGV[0]) {
-  print "Usage: $myself [-hqlr] [-m <host>] <address>|-f <file>\n";
+  print "Usage: $myself [-hqlr] [-m <host>] [-s <from>] [-e <EHLO>] <address>|-f <file>\n";
   print "Options: -V  display copyright and version\n";
   print "         -h  show documentation\n";
   print "         -q  quiet (no output, just exit with 0/1/2/3)\n";
   print "         -l  extended logging\n";
   print "         -r  test random address to verify verification\n";
   print "  -m <host>  no DNS lookup, just test this host\n";
+  print "  -s <from>  override configured value for MAIL FROM\n";
+  print "  -e <EHLO>  override configured value for EHLO\n";
   print "  <address>  mail address to check\n\n";
   print "  -f <file>  parse file (one address per line)\n";
   exit(100);
 };
+
+# -s / -e: override configuration
+$config{'from'} = $options{'s'} if $options{'s'};
+$config{'helo'} = $options{'e'} if $options{'e'};
 
 # -f: open file and read addresses to @adresses
 my @addresses;
@@ -369,7 +375,7 @@ checkmail - check deliverability of a mail address
 
 =head1 SYNOPSIS
 
-B<checkmail> [B<-Vhqlr>] [B<-m> I<host>] I<address>|B<-f> I<file>
+B<checkmail> [B<-Vhqlr>] [B<-m> I<host>]  [-s I<sender>] [-e I<EHLO>] I<address>|B<-f> I<file>
 
 =head1 REQUIREMENTS
 
@@ -425,6 +431,9 @@ The hostname to be used for I<HELO> or I<EHLO> in the SMTP dialog.
 The sender address to be used for I<MAIL FROM> while testing.
 
 =back
+
+You may override that configuration by using the B<-e> and B<-s>
+command line options.
 
 =head2 Usage
 
@@ -536,6 +545,14 @@ Force a connection to I<host> to check deliverability to that
 particular host irrespective of DNS entries. For example:
 
     checkmail -m test.host.example user@domain.example
+
+=item B<-s> I<sender> (value for MAIL FROM)
+
+Override configuration and use I<sender> for MAIL FROM.
+
+=item B<-e> I<EHLO> (value for EHLO)
+
+Override configuration and use I<EHLO> for EHLO.
 
 =item B<-f> I<file> (file)
 
