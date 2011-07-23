@@ -1,6 +1,6 @@
 #! /usr/bin/perl -W
 #
-# checkmail Version 0.4 by Thomas Hochstein
+# checkmail Version 0.5 by Thomas Hochstein
 #
 # This script tries to verify the deliverability of (a) mail address(es).
 # 
@@ -9,7 +9,7 @@
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
 
-our $VERSION = "0.4";
+our $VERSION = "0.5";
 
 ################################# Configuration ################################
 # Please fill in a working configuration!
@@ -92,28 +92,35 @@ if ($options{'f'}) {
 my (%targets,$curstat,$status,$log,$message);
 foreach (@addresses) {
   my $address = $_;
-  my $domain = Mail::Address->new('',$address)->host;
-  printf("  * Testing %s ...\n",$address) if !($options{'q'});
-  $log .=  "\n===== BEGIN $address =====\n";
-  # get list of target hosts or take host forced via -m
-  if (!$options{'m'}) {
-	  %targets = %{gettargets($domain,\$log)};
-  } else {
-    $message = sprintf("Connection to %s forced by -m.\n",$options{'m'});
-    $log .= $message;
-    print "    $message" if !($options{'q'});
-    # just one target host with preference 0
-    $targets{$options{'m'}} = 0;
-  };
-  if (%targets) {
-    $curstat = checkaddress($address,\%targets,\$log);
-  } else {
+  # regexp taken from http://www.regular-expressions.info/email.html
+  # and escaping of "/" added two times
+  if ($address !~ /^(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i) {
+    printf("  > Address <%s> is syntactically INVALID.\n",$address) if !($options{'q'});
     $curstat = 2;
-    $message = 'DNS lookup failure';
-    printf("  > Address is INVALID (%s).\n",$message) if !($options{'q'});
-    $log .= $message . '.';
+  } else {
+    my $domain = Mail::Address->new('',$address)->host;
+    printf("  * Testing %s ...\n",$address) if !($options{'q'});
+    $log .=  "\n===== BEGIN $address =====\n";
+    # get list of target hosts or take host forced via -m
+    if (!$options{'m'}) {
+	    %targets = %{gettargets($domain,\$log)};
+    } else {
+      $message = sprintf("Connection to %s forced by -m.\n",$options{'m'});
+      $log .= $message;
+      print "    $message" if !($options{'q'});
+      # just one target host with preference 0
+      $targets{$options{'m'}} = 0;
+    };
+    if (%targets) {
+      $curstat = checkaddress($address,\%targets,\$log);
+    } else {
+      $curstat = 2;
+      $message = 'DNS lookup failure';
+      printf("  > Address is INVALID (%s).\n",$message) if !($options{'q'});
+      $log .= $message . '.';
+    };
+    $log   .=  "====== END $address ======\n";
   };
-  $log   .=  "====== END $address ======\n";
   $status = $curstat if (!defined($status) or $curstat > $status);
 };
 
@@ -441,7 +448,8 @@ After configuring the script you may run your first test with
 
     checkmail user@example.org
 
-B<checkmail> will try to determine the mail exchanger(s) (MX)
+B<checkmail> will check the address for syntactic validity. If the
+address is valid, it will try to determine the mail exchanger(s) (MX)
 responsible for I<example.org> by querying the DNS for the respective
 MX records and then try to connect via SMTP (on port 25) to each of
 them in order of precedence (if necessary). It will run through the

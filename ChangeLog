@@ -1,3 +1,11 @@
+Version 0.5
+
+* Add syntax check for mail addresses.
+  Change documentation accordingly.
+  Fixes #11.
+  Thomas Hochstein <thh@inter.net> Sat Jul 23 23:53:22 2011 +0200
+
+
 Version 0.4
 
 * Add overrides for configuration (MAIL FROM/EHLO).
