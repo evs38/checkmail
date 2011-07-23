@@ -514,6 +514,9 @@ B<Please note:> You shouldn't try to validate addresses while working
 from a dial-up or blacklisted host. If in doubt, use the B<-l> option
 to have a closer look on the SMTP dialog yourself.
 
+B<Please note:> To avoid shell expansion on addresses you submit to
+B<checkmail>, use B<batch processing>.
+
 =head1 OPTIONS
 
 =over 3
