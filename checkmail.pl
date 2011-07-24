@@ -93,8 +93,9 @@ my (%targets,$curstat,$status,$log,$message);
 foreach (@addresses) {
   my $address = $_;
   # regexp taken from http://www.regular-expressions.info/email.html
-  # and escaping of "/" added two times
-  if ($address !~ /^(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i) {
+  # with escaping of "/" added two times and "*" changed to "+"
+  # in localpart, second alternative
+  if ($address !~ /^(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f]+)")@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i) {
     printf("  > Address <%s> is syntactically INVALID.\n",$address) if !($options{'q'});
     $curstat = 2;
   } else {
