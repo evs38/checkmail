@@ -4,12 +4,12 @@
 #
 # This script tries to verify the deliverability of (a) mail address(es).
 # 
-# Copyright (c) 2002-2010 Thomas Hochstein <thh@inter.net>
+# Copyright (c) 2002-2011 Thomas Hochstein <thh@inter.net>
 #
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
 
-our $VERSION = "0.5";
+our $VERSION = "0.6";
 
 ################################# Configuration ################################
 # Please fill in a working configuration!

@@ -1,3 +1,12 @@
+Version 0.6 (2011-10-24)
+
+* Don't temp-fail on random address check.
+  Thomas Hochstein <thh@inter.net> Mon Oct 24 22:27:01 2011 +0200
+
+* Fix regexp for syntax check.
+  Thomas Hochstein <thh@inter.net> Sun Jul 24 12:28:26 2011 +0200
+
+
 Version 0.5
 
 * Add syntax check for mail addresses.
