@@ -227,7 +227,7 @@ sub checksmtp {
         # verification impossible?
         } elsif ($success) {
           $status = 3;
-          print "  > Address verificaton impossible. You'll have to send a test mail ...\n" if !($options{'q'});
+          print "  > Address verification impossible. You'll have to send a test mail ...\n" if !($options{'q'});
         }
       }
       # if -r is not set or status was not set to 3: valid address
