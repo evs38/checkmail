@@ -224,6 +224,9 @@ sub checksmtp {
         # connection failure?
         if ($success < 0) {
           $status = connection_failed(@message);
+          # reset status - the address has been checked and _is_ valid!
+          $status = 3;
+          print "  > Address verification currently impossible. You'll have to try again or send a test mail ...\n" if !($options{'q'});
         # verification impossible?
         } elsif ($success) {
           $status = 3;
