@@ -1,3 +1,10 @@
+Version 0.6.1 (2011-12-04)
+
+* Fix annoying error message
+  (and some small changes).
+  Thomas Hochstein <thh@inter.net> Sun Dec 04 16:41:52 2011 +0200
+
+
 Version 0.6 (2011-10-24)
 
 * Don't temp-fail on random address check.
