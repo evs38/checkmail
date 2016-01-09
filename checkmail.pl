@@ -9,7 +9,7 @@
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
 
-our $VERSION = "0.6.1";
+our $VERSION = "0.6.2";
 
 ################################# Configuration ################################
 # Please fill in a working configuration!
@@ -39,7 +39,7 @@ getopts('Vhqlrf:m:s:e:', \%options);
 
 # -V: display version
 if ($options{'V'}) {
-  print "$myself v $VERSION\nCopyright (c) 2010 Thomas Hochstein <thh\@inter.net>\n";
+  print "$myself v $VERSION\nCopyright (c) 2010-2016 Thomas Hochstein <thh\@inter.net>\n";
   print "This program is free software; you may redistribute it and/or modify it under the same terms as Perl itself.\n";
   exit(100);
 };
@@ -67,7 +67,7 @@ if (!$options{'f'} and !$ARGV[0]) {
 };
 
 # -s / -e: override configuration
-$config{'from'} = $options{'s'} if $options{'s'};
+$config{'from'} = $options{'s'} if defined($options{'s'});
 $config{'helo'} = $options{'e'} if $options{'e'};
 
 # -f: open file and read addresses to @adresses
@@ -440,6 +440,7 @@ The hostname to be used for I<HELO> or I<EHLO> in the SMTP dialog.
 =item B<$config{'from'}>
 
 The sender address to be used for I<MAIL FROM> while testing.
+May be empty ('') to set '<>' as MAIL FROM.
 
 =back
 
