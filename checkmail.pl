@@ -155,13 +155,26 @@ sub gettargets {
   } else {
     print_dns_result($domain,'MX',undef,$resolver->errorstring,$logr);
     print("    Falling back to A record ...\n") if !($options{'q'});
-	# get A record(s)
+    # get A record(s)
+    # may get CNAMEs instead ...
     if (my $query = $resolver->query($domain,'A','IN')) {
-      print_dns_result($domain,'A',$query->header->ancount,undef,$logr);
+      # save number of answers in a counter
+      my $acount = $query->header->ancount;
       foreach my $rr ($query->answer) {
+        if ($rr->type ne 'A') {
+          # decrease counter if it's not an A record
+          $acount--;
+          # report CNAMEs and don't add them to target list
+          if ($rr->type eq 'CNAME') {
+            printf ("  ~ '%s' is a CNAME for '%s' and will be resolved accordingly. \n",$rr->name,$rr->cname) if !($options{'q'});
+            $$logr .= sprintf("CNAME resolved: %s -> %s\n",$rr->name,$rr->cname);
+          }
+          next;
+        }
         $targets{$rr->address} = 0;
         $$logr .= sprintf("- %s\n",$rr->address);
       };
+      print_dns_result($domain,'A',$acount,undef,$logr);
     # no A record found either; log and fail
     } else {
       print_dns_result($domain,'A',undef,$resolver->errorstring,$logr);
@@ -461,11 +474,12 @@ them in order of precedence (if necessary). It will run through the
 SMTP dialog until just before the I<DATA> stage, i.e. doing I<EHLO>,
 I<MAIL FROM> and I<RCPT TO>. If no MX is defined, B<checkmail> will
 fall back to the I<example.org> host itself, provided there is at
-least one A record defined in the DNS. If there are neither MX nor A
-records for I<example.org>, mail is not deliverable and B<checkmail>
-will fail accordingly. If no host can be reached, B<checkmail> will
-fail, too. Finally B<checkmail> will fail if mail to the given
-recipient is not accepted by the respective host.
+least one A record defined in the DNS. CNAMEs will be accepted and
+resolved here. If there are neither MX nor A records for
+I<example.org>, mail is not deliverable and B<checkmail> will fail
+accordingly. If no host can be reached, B<checkmail> will fail,
+too. Finally B<checkmail> will fail if mail to the given recipient
+is not accepted by the respective host.
 
 If B<checkmail> fails, you'll not be able to deliver mail to that
 address - at least not using the configured sender address and from

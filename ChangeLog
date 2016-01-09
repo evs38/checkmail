@@ -1,5 +1,10 @@
 Version 0.6.2 (unreleased)
 
+* Try to handle CNAMEs and resolve them to A records.
+  Change documentation accordingly.
+  Fixes #55.
+  Thomas Hochstein <thh@inter.net> Sat Jan 9 12:02:27 2016 +0100
+
 * Allow setting an empty envelope-from ('<>') using '-s'.
   Change documentation accordingly.
   Update version and copyright dates.
