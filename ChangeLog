@@ -1,4 +1,4 @@
-Version 0.6.2 (unreleased)
+Version 0.6.2 (2016-01-09)
 
 * Try to handle CNAMEs and resolve them to A records.
   Change documentation accordingly.
