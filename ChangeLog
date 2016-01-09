@@ -1,3 +1,9 @@
+Version 0.6.3 (unreleased)
+
+* Fix display of CNAME/A records in log file.
+  Thomas Hochstein <thh@inter.net> Sat Jan 9 12:34:21 2016 +0100
+
+
 Version 0.6.2 (2016-01-09)
 
 * Try to handle CNAMEs and resolve them to A records.

@@ -9,7 +9,7 @@
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
 
-our $VERSION = "0.6.2";
+our $VERSION = "0.6.3 (unreleased)";
 
 ################################# Configuration ################################
 # Please fill in a working configuration!
@@ -154,27 +154,23 @@ sub gettargets {
   # no MX record found; log and try A record(s)
   } else {
     print_dns_result($domain,'MX',undef,$resolver->errorstring,$logr);
-    print("    Falling back to A record ...\n") if !($options{'q'});
+    print("    Falling back to A record(s) ...\n") if !($options{'q'});
     # get A record(s)
     # may get CNAMEs instead ...
     if (my $query = $resolver->query($domain,'A','IN')) {
-      # save number of answers in a counter
-      my $acount = $query->header->ancount;
+      print_dns_result($domain,'A/CNAME',$query->header->ancount,undef,$logr);
       foreach my $rr ($query->answer) {
         if ($rr->type ne 'A') {
-          # decrease counter if it's not an A record
-          $acount--;
           # report CNAMEs and don't add them to target list
           if ($rr->type eq 'CNAME') {
             printf ("  ~ '%s' is a CNAME for '%s' and will be resolved accordingly. \n",$rr->name,$rr->cname) if !($options{'q'});
-            $$logr .= sprintf("CNAME resolved: %s -> %s\n",$rr->name,$rr->cname);
+            $$logr .= sprintf("- CNAME resolved: %s -> %s\n",$rr->name,$rr->cname);
           }
           next;
         }
         $targets{$rr->address} = 0;
         $$logr .= sprintf("- %s\n",$rr->address);
       };
-      print_dns_result($domain,'A',$acount,undef,$logr);
     # no A record found either; log and fail
     } else {
       print_dns_result($domain,'A',undef,$resolver->errorstring,$logr);
