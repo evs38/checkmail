@@ -39,7 +39,7 @@ getopts('Vhqlrf:m:s:e:', \%options);
 
 # -V: display version
 if ($options{'V'}) {
-  print "$myself v $VERSION\nCopyright (c) 2010-2016 Thomas Hochstein <thh\@inter.net>\n";
+  print "$myself v $VERSION\nCopyright (c) 2002-2016 Thomas Hochstein <thh\@inter.net>\n";
   print "This program is free software; you may redistribute it and/or modify it under the same terms as Perl itself.\n";
   exit(100);
 };
