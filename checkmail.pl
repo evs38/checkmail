@@ -1,10 +1,10 @@
 #! /usr/bin/perl -w
 #
-# checkmail Version 0.6.1 by Thomas Hochstein
+# checkmail Version 0.6.3 by Thomas Hochstein
 #
 # This script tries to verify the deliverability of (a) mail address(es).
 # 
-# Copyright (c) 2002-2011 Thomas Hochstein <thh@inter.net>
+# Copyright (c) 2002-2016 Thomas Hochstein <thh@inter.net>
 #
 # It can be redistributed and/or modified under the same terms under 
 # which Perl itself is published.
@@ -629,7 +629,7 @@ Thomas Hochstein <thh@inter.net>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2002-2010 Thomas Hochstein <thh@inter.net>
+Copyright (c) 2002-2016 Thomas Hochstein <thh@inter.net>
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.
