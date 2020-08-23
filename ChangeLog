@@ -1,5 +1,8 @@
 Version 0.6.3 (unreleased)
 
+* Change mail address.
+  Thomas Hochstein <thh@thh.name> Sun Aug 23 22:37:10 2020 +0200
+
 * Fix display of CNAME/A records in log file.
   Thomas Hochstein <thh@inter.net> Sat Jan 9 12:34:21 2016 +0100
 
